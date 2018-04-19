@@ -64,13 +64,13 @@ def read_file(file):
 def find_MST():
     MST_cities = []
     MST_weight = 0
-    MST_edges = ""
+    #MST_edges = ""
     first_node = cities.get(list(cities.keys())[0])
     first_node.boolean = True
     MST_cities.append(first_node.name)
     all_edges = first_node.edges
-    heapify(all_edges)
-    for entry in all_edges:              #Lägger till föräldern till edges
+
+    for entry in all_edges:
         entry.append(first_node.name)
 
     while len(MST_cities) < len(cities):                   #Vill hålla på tills alla städer finns med
@@ -81,14 +81,15 @@ def find_MST():
             MST_weight += possible_next_edge[0]         #Lägger till vägens längd till den totala väglängden
             next_city.boolean = True
 
-            for entry in next_city.edges:
-                heappush(all_edges, entry)
+            #for entry in next_city.edges:
+            for x in range(0,60):
+                heappush(all_edges, next_city.edges[x])
 
-            MST_edges = MST_edges + possible_next_edge[2] + "--" + possible_next_edge[1] + " [" + str(possible_next_edge[0]) + "] \n"
+            #MST_edges = MST_edges + possible_next_edge[2] + "--" + possible_next_edge[1] + " [" + str(possible_next_edge[0]) + "] \n"
 
     #print(MST_edges)
     print(MST_weight)
-    #return MST_weight
+    return MST_weight
 
 #read_file('tinyEWG-alpha.txt')
 #read_file('USA-highway-miles.txt')
