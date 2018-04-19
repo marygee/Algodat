@@ -32,8 +32,8 @@ def ad_edges(string):
     if city_two[0] == "\"":
         city_two = city_two[1:-1]
 
-    heappush(cities[city_one].edges, ([distance, city_two]))
-    heappush(cities[city_two].edges, ([distance, city_one]))
+    heappush(cities[city_one].edges, ([distance, city_two, city_one]))
+    heappush(cities[city_two].edges, ([distance, city_one, city_two]))
 
 def read_file(file):
     f = open(file, 'r')
@@ -73,7 +73,7 @@ def find_MST():
     for entry in all_edges:              #Lägger till föräldern till edges
         entry.append(first_node.name)
 
-    while len(MST_cities) < 128:                   #Vill hålla på tills alla städer finns med
+    while len(MST_cities) < len(cities):                   #Vill hålla på tills alla städer finns med
         possible_next_edge = heappop(all_edges)      #Får reda på vilket det kostaste avståndet är och till vilken stad. Den edgen tas bort från listan
         if cities.get(possible_next_edge[1]).boolean is False:
             next_city = cities.get(possible_next_edge[1])
@@ -82,16 +82,15 @@ def find_MST():
             next_city.boolean = True
 
             for entry in next_city.edges:
-                entry.append(next_city.name)
                 heappush(all_edges, entry)
 
             MST_edges = MST_edges + possible_next_edge[2] + "--" + possible_next_edge[1] + " [" + str(possible_next_edge[0]) + "] \n"
 
-    print(MST_edges)
+    #print(MST_edges)
     print(MST_weight)
     #return MST_weight
 
-# read_file('tinyEWG-alpha.txt')
+#read_file('tinyEWG-alpha.txt')
 #read_file('USA-highway-miles.txt')
 text_file = sys.argv[1]
 read_file(text_file)
