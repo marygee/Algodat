@@ -9,6 +9,8 @@ def readfile_forsete(file):
             names.append(line[0:-1])
         else:
             edges[current_line[0]] = (current_line[1], current_line[2])
+            edges[current_line[1]] = (current_line[0], current_line[2])
+
 
 def readfile():
     names = []
@@ -23,3 +25,5 @@ def readfile():
             edges[current_line[0]] = (current_line[1], current_line[2])
             edges[current_line[1]] = (current_line[0], current_line[2])
 
+
+def find():
