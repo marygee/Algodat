@@ -19,8 +19,8 @@ def readfile_forsete(file):
             edges[int(current_line[1])].append((int(current_line[0]), int(current_line[2])))
 
 
-def readfile(infile):
-    f = open(infile, "r")
+def readfile():
+    f = open("rail.txt", "r")
     input_text = f.readlines()
     name_index = 0
     nr_names = int(input_text[0])
@@ -46,40 +46,72 @@ def fordfulkerson():
     return delta
 
 
-# dfs hittar en godtycklig väg från källan till sänkan som har capasitet > 0 som den returnerar.
-# samtidigt ändrar den kapasiteten för de edges den passarat.
-# SPARA KAPACITETER
+# dfs hittar en godtycklig väg från källan till sänkan som har capacitet > 0 som den returnerar.
+# samtidigt ändrar den kapaciteten för de edges den passarat.
+# LÄGGA TILLBAKA EDGES
 def dfs():
-    # source = 0
     dfs_edges = edges  # vi borde göra copy() men d funkar det inte
-    # print(dfs_edges)
     sink = len(names) - 1
     visited = [False] * len(names)
     visited[0] = True
-    path = [0]
+    current_node = 0
     current_edge = dfs_edges[0].pop(0)
+    path = [0]
+    waste = {}
+    for i in range(sink):
+        waste[i] = []
 
     while current_edge[0] != sink:  # ska vi inte ta det sista steget? nej!
         visited[current_edge[0]] = True
         path.append(current_edge)
-        while dfs_edges[current_edge[0]] is []:  # Om vi går till en återvändsgränd
+        while dfs_edges[current_edge[0]] == []:  # Om vi går till en återvändsgränd
             current_edge = path.pop(-1)
+            waste[current_node].append(current_edge)     # Lägger till vaskad edge i vaskdicten
+
         next_edge = dfs_edges[current_edge[0]].pop(0)
+        while next_edge[1] == 0:                      # Kollar om capacityn är 0, isf vill vi inte använda den vägen
+            waste[current_node].append(next_edge)
+            next_edge = dfs_edges[current_edge[0]].pop(0)
 
         while visited[next_edge[0]] is True:  # Hoppar vi över den då den redan varit med?
+            waste[current_node].append(next_edge)
             while dfs_edges[current_edge[0]] == []:
+
                 path.pop(-1)
                 current_edge = path.pop(-1)
             next_edge = dfs_edges[current_edge[0]].pop(0)
 
+        current_node = current_edge[0]
         current_edge = next_edge
     if current_edge[0] is sink:
         path.append(current_edge)
     print(path)
     delta = findflow(path[1:])  # första är bara en nolla, inte så kul
 
-    # lite mer kod här
+    print("Edges innan waste")
+    print(dfs_edges)
 
+    print("Waste")
+    print(waste)
+
+    # Lägga till waste-edges - INTE FIXAT
+    #for i in range(sink):
+    #    dfs_edges[i].update(waste[i])
+
+
+
+    print("Edges efter waste")
+    print(dfs_edges)
+
+
+    last_entry = 0
+    for entry in path:
+        entry[1] -= delta
+        dfs_edges[last_entry] = entry
+        last_entry = entry[0]
+
+    print("Edges efter path")
+    print(dfs_edges)
     return delta
 
 
@@ -106,9 +138,8 @@ def findflow(path):
     return min_cap
 
 
-data = sys.argv[1]
-readfile(data)
-cpe = edges.copy()      # Nu får i en kopia av edges iaf
-# print(edges)
+#data = sys.argv[1]
+readfile()
+dfs_edges = edges.copy()      # Nu får i en kopia av edges iaf
 my_flow = fordfulkerson()
 print('vårt flöde blir', my_flow)
