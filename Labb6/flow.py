@@ -53,28 +53,17 @@ def dfs():
             current_edge = path.pop(-1)
         next_edge = dfs_edges[current_edge[0]].pop(0)
 
-
-
         while visited[next_edge[0]] is True:
-            print(str(next_edge[0]) + " is visited")
-
-            if dfs_edges[current_edge[0]] == []:
-                print(path)
+            while dfs_edges[current_edge[0]] == []:
                 path.pop(-1)
                 current_edge = path.pop(-1)
-
-                print(current_edge)
             next_edge = dfs_edges[current_edge[0]].pop(0)
 
-
-
-
-
-        print(next_edge)
-
         current_edge = next_edge
+    if current_edge[0] is sink:
+        path.append(current_edge)
     print(path)
 
 readfile()
-
+#print(edges)
 dfs()
